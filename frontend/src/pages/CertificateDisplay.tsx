@@ -178,7 +178,7 @@ const CertificateDisplay = () => {
             {certificate.date && (
               <div className="detail-row">
                 <span className="detail-label">Issue Date:</span>
-                <span class="detail-value">{new Date(certificate.date).toLocaleDateString()}</span>
+                <span className="detail-value">{new Date(certificate.date).toLocaleDateString()}</span>
               </div>
             )}
             {certificate.projectDescription && (
@@ -203,10 +203,10 @@ const CertificateDisplay = () => {
                   const parent = target.parentElement;
                   if (parent) {
                     parent.innerHTML = `
-                      <div class="certificate-placeholder">
-                        <i class="fas fa-certificate"></i>
+                      <div className="certificate-placeholder">
+                        <i className="fas fa-certificate"></i>
                         <p>Certificate image could not be loaded</p>
-                        <a href="${certificate.imageUrl}" target="_blank" class="view-original-btn">
+                        <a href="${certificate.imageUrl}" target="_blank" className="view-original-btn">
                           View Original
                         </a>
                       </div>
