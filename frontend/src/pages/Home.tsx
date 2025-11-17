@@ -18,7 +18,7 @@ function Home() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('http://localhost:5002/api/stats');
+      const response = await fetch('https://cie-sparke-website-lraz-kppm9a4vj.vercel.app/api/stats');
       const data = await response.json();
       setStats(data);
     } catch (error) {

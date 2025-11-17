@@ -32,7 +32,7 @@ function Certificates() {
 
   const fetchCertificates = async () => {
     try {
-      const response = await fetch('http://localhost:5002/api/certificates');
+      const response = await fetch('https://cie-sparke-website-lraz-kppm9a4vj.vercel.app/api/certificates');
       const data = await response.json();
       // Filter out certificates with missing event name
       const validCertificates = data.filter((cert: Certificate) => 
