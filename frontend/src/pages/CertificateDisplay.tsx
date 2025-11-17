@@ -30,7 +30,7 @@ const CertificateDisplay = () => {
         
         // Since the URL uses normalized event names (no spaces, lowercase),
         // we need to fetch all certificates and find the matching one
-        const response = await axios.get('https://cie-sparke-website-lraz-kppm9a4vj.vercel.app/api/certificates');
+        const response = await axios.get('https://cie-sparke-website-lraz.vercel.app/api/certificates');
         
         if (response.data && Array.isArray(response.data)) {
           // Find certificate by matching SRN and normalized event name
