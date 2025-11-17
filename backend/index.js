@@ -8,7 +8,16 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://cie-sparke-website.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5173'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // MongoDB Connection
@@ -127,6 +136,20 @@ app.get('/api/stats', async (req, res) => {
     console.error('Error fetching stats:', error);
     res.status(500).json({ error: 'Failed to fetch statistics' });
   }
+});
+
+// Handle preflight requests
+app.options('*', (req, res) => {
+  res.status(200).end();
+});
+
+// Catch-all handler for undefined routes
+app.use('*', (req, res) => {
+  res.status(404).json({ 
+    error: 'Route not found', 
+    message: 'CIESpark Backend API is running, but this route does not exist.',
+    availableRoutes: ['/api/stats', '/api/certificates', '/api/certificates/:srn/:eventName', '/api/certificates/student/:srn']
+  });
 });
 
 // ❗ NO app.listen() — Vercel handles the server

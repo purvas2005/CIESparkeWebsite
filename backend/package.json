@@ -2,9 +2,10 @@
   "name": "ciespark-backend",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "api/index.js",
   "scripts": {
     "start": "node index.js",
+    "build": "echo 'Build complete'",
     "dev": "nodemon app.cjs",
     "dev:serverless": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,7 +19,9 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "mongoose": "^8.8.3",
-    "nodemon": "^3.1.7",
     "serverless-http": "^4.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }
