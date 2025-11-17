@@ -1,44 +1,24 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-
-import dotenv from 'dotenv';
-dotenv.config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
+const PORT = process.env.PORT || 5002;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/blockchain-certificates';
 
-if (!MONGODB_URI) {
-  console.error("❌ Missing MONGODB_URI in environment variables");
-}
-
-// Important: Do NOT reconnect on every serverless call
-// So we store the connection in a global variable
-let isConnected = false;
-
-async function connectToDatabase() {
-  if (isConnected) return;
-
-  try {
-    const db = await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    isConnected = db.connections[0].readyState === 1;
-    console.log("✅ Connected to MongoDB (Vercel Serverless)");
-  } catch (err) {
-    console.error("❌ MongoDB connection error:", err);
-  }
-}
-
-await connectToDatabase();
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('✅ Connected to MongoDB'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Certificate Schema
 const certificateSchema = new mongoose.Schema({
@@ -55,9 +35,7 @@ const certificateSchema = new mongoose.Schema({
   tokenId: String,
 }, { timestamps: true });
 
-const Certificate =
-  mongoose.models.Certificate ||
-  mongoose.model('Certificate', certificateSchema, 'certificates');
+const Certificate = mongoose.model('Certificate', certificateSchema, 'certificates');
 
 // Routes
 app.get('/', (req, res) => {
@@ -79,15 +57,15 @@ app.get('/api/certificates', async (req, res) => {
 app.get('/api/certificates/:srn/:eventName', async (req, res) => {
   try {
     const { srn, eventName } = req.params;
-    const certificate = await Certificate.findOne({
-      srn,
+    const certificate = await Certificate.findOne({ 
+      srn, 
       eventName: new RegExp(eventName.replace(/\s+/g, '\\s*'), 'i')
     });
-
+    
     if (!certificate) {
       return res.status(404).json({ error: 'Certificate not found' });
     }
-
+    
     res.json(certificate);
   } catch (error) {
     console.error('Error fetching certificate:', error);
@@ -116,7 +94,7 @@ app.get('/api/stats', async (req, res) => {
     const recentCertificates = await Certificate.find()
       .sort({ createdAt: -1 })
       .limit(5);
-
+    
     res.json({
       totalCertificates,
       totalStudents: uniqueStudents.length,
@@ -129,6 +107,7 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
-// ❗ NO app.listen() — Vercel handles the server
-
-export default app;
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+});
