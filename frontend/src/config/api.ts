@@ -1,7 +1,7 @@
 // API Configuration
 const API_CONFIG = {
-  // Updated to match your current deployment URL
-  BACKEND_URL: 'https://cie-sparke-website.vercel.app',
+  // Your backend deployment URL
+  BACKEND_URL: 'https://cie-sparke-website-lraz.vercel.app',
   
   // API endpoints
   ENDPOINTS: {
