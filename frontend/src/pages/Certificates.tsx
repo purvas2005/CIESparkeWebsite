@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Certificates.css';
+import { getApiUrl } from '../config/api';
 
 interface Certificate {
   _id: string;
@@ -32,7 +33,7 @@ function Certificates() {
 
   const fetchCertificates = async () => {
     try {
-      const response = await fetch('https://cie-sparke-website-lraz.vercel.app/api/certificates');
+      const response = await fetch(getApiUrl('/api/certificates'));
       const data = await response.json();
       // Filter out certificates with missing event name
       const validCertificates = data.filter((cert: Certificate) => 

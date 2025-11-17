@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './CertificateDisplay.css';
+import { getApiUrl } from '../config/api';
 
 interface Certificate {
   _id: string;
@@ -30,7 +31,7 @@ const CertificateDisplay = () => {
         
         // Since the URL uses normalized event names (no spaces, lowercase),
         // we need to fetch all certificates and find the matching one
-        const response = await axios.get('https://cie-sparke-website-lraz.vercel.app/api/certificates');
+        const response = await axios.get(getApiUrl('/api/certificates'));
         
         if (response.data && Array.isArray(response.data)) {
           // Find certificate by matching SRN and normalized event name
