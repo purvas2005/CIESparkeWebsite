@@ -44,11 +44,11 @@ await connectToDatabase();
 const certificateSchema = new mongoose.Schema({
   srn: { type: String, required: true },
   studentName: String,
-  eventName: { type: String, required: true },
-  certificateUrl: { type: String, required: true },
-  issueDate: Date,
-  description: String,
-  badgeType: String,
+  event: { type: String, required: true }, // Changed from eventName to event
+  imageUrl: { type: String, required: true }, // Changed from certificateUrl to imageUrl
+  date: Date, // Changed from issueDate to date
+  achievement: String, // Added achievement field
+  projectDescription: String, // Added projectDescription field
   transactionHash: String,
   verified: Boolean,
   ipfsHash: String,
@@ -81,7 +81,7 @@ app.get('/api/certificates/:srn/:eventName', async (req, res) => {
     const { srn, eventName } = req.params;
     const certificate = await Certificate.findOne({
       srn,
-      eventName: new RegExp(eventName.replace(/\s+/g, '\\s*'), 'i')
+      event: new RegExp(eventName.replace(/\s+/g, '\\s*'), 'i') // Updated to use 'event' field
     });
 
     if (!certificate) {
@@ -112,7 +112,7 @@ app.get('/api/stats', async (req, res) => {
   try {
     const totalCertificates = await Certificate.countDocuments();
     const uniqueStudents = await Certificate.distinct('srn');
-    const uniqueEvents = await Certificate.distinct('eventName');
+    const uniqueEvents = await Certificate.distinct('event'); // Updated to use 'event' field
     const recentCertificates = await Certificate.find()
       .sort({ createdAt: -1 })
       .limit(5);
