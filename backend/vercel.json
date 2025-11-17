@@ -1,24 +1,16 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node@3.0.7",
-      "config": {
-        "includeFiles": "**",
-        "maxLambdaSize": "50mb"
-      }
+  "functions": {
+    "api/index.js": {
+      "runtime": "nodejs18.x",
+      "memory": 1024,
+      "maxDuration": 10
     }
-  ],
+  },
   "routes": [
     {
       "src": "/(.*)",
       "dest": "/api/index.js"
     }
-  ],
-  "functions": {
-    "api/index.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }
