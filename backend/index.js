@@ -44,20 +44,19 @@ async function connectToDatabase() {
     console.log("✅ Connected to MongoDB (Vercel Serverless)");
   } catch (err) {
     console.error("❌ MongoDB connection error:", err);
+    throw err;
   }
 }
-
-await connectToDatabase();
 
 // Certificate Schema
 const certificateSchema = new mongoose.Schema({
   srn: { type: String, required: true },
   studentName: String,
-  event: { type: String, required: true }, // Changed from eventName to event
-  imageUrl: { type: String, required: true }, // Changed from certificateUrl to imageUrl
-  date: Date, // Changed from issueDate to date
-  achievement: String, // Added achievement field
-  projectDescription: String, // Added projectDescription field
+  event: { type: String, required: true },
+  imageUrl: { type: String, required: true },
+  date: Date,
+  achievement: String,
+  projectDescription: String,
   transactionHash: String,
   verified: Boolean,
   ipfsHash: String,
@@ -69,13 +68,20 @@ const Certificate =
   mongoose.model('Certificate', certificateSchema, 'certificates');
 
 // Routes
-app.get('/', (req, res) => {
-  res.json({ message: 'CIESpark Backend API is running!' });
+app.get('/', async (req, res) => {
+  try {
+    await connectToDatabase();
+    res.json({ message: 'CIESpark Backend API is running!' });
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).json({ error: 'Database connection failed' });
+  }
 });
 
 // Get all certificates
 app.get('/api/certificates', async (req, res) => {
   try {
+    await connectToDatabase();
     const certificates = await Certificate.find().sort({ createdAt: -1 });
     res.json(certificates);
   } catch (error) {
@@ -87,10 +93,11 @@ app.get('/api/certificates', async (req, res) => {
 // Get certificate by SRN and event name
 app.get('/api/certificates/:srn/:eventName', async (req, res) => {
   try {
+    await connectToDatabase();
     const { srn, eventName } = req.params;
     const certificate = await Certificate.findOne({
       srn,
-      event: new RegExp(eventName.replace(/\s+/g, '\\s*'), 'i') // Updated to use 'event' field
+      event: new RegExp(eventName.replace(/\s+/g, '\\s*'), 'i')
     });
 
     if (!certificate) {
@@ -107,6 +114,7 @@ app.get('/api/certificates/:srn/:eventName', async (req, res) => {
 // Get certificates by SRN
 app.get('/api/certificates/student/:srn', async (req, res) => {
   try {
+    await connectToDatabase();
     const { srn } = req.params;
     const certificates = await Certificate.find({ srn }).sort({ createdAt: -1 });
     res.json(certificates);
@@ -119,9 +127,10 @@ app.get('/api/certificates/student/:srn', async (req, res) => {
 // Get certificate statistics
 app.get('/api/stats', async (req, res) => {
   try {
+    await connectToDatabase();
     const totalCertificates = await Certificate.countDocuments();
     const uniqueStudents = await Certificate.distinct('srn');
-    const uniqueEvents = await Certificate.distinct('event'); // Updated to use 'event' field
+    const uniqueEvents = await Certificate.distinct('event');
     const recentCertificates = await Certificate.find()
       .sort({ createdAt: -1 })
       .limit(5);
